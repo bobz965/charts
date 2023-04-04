@@ -10,6 +10,7 @@ metadata:
 data:
   setup-certs.sh: |-
     #!/bin/bash
+    export EASYRSA_BATCH=1 # for non-interactive environments 
     EASY_RSA_LOC="/etc/openvpn/certs"
     SERVER_CERT="${EASY_RSA_LOC}/pki/issued/server.crt"
     if [ -e "$SERVER_CERT" ]
@@ -35,6 +36,7 @@ data:
       client
       nobind
       dev tun
+      remote-cert-tls server # mitigate mitm
       remote ${MY_IP_ADDR} {{ .Values.service.externalPort }} {{ .Values.openvpn.OVPN_PROTO }}
       {{- if .Values.openvpn.redirectGateway }}
       redirect-gateway def1
@@ -117,10 +119,19 @@ data:
   openvpn.conf: |-
       server {{ .Values.openvpn.OVPN_NETWORK }} {{ .Values.openvpn.OVPN_SUBNET }}
       verb 3
-      key /etc/openvpn/certs/pki/private/server.key
-      ca /etc/openvpn/certs/pki/ca.crt
-      cert /etc/openvpn/certs/pki/issued/server.crt
-      dh /etc/openvpn/certs/pki/dh.pem
+      {{ if .Values.openvpn.useCrl }}
+          crl-verify /etc/openvpn/certs/crl.pem
+      {{ end }}
+          key /etc/openvpn/certs/pki/private/server.key
+          ca /etc/openvpn/certs/pki/ca.crt
+          cert /etc/openvpn/certs/pki/issued/server.crt
+          dh /etc/openvpn/certs/pki/dh.pem
+      {{ if .Values.openvpn.taKey }}
+          tls-auth /etc/openvpn/certs/pki/ta.key 0
+      {{ end }}
+      {{ if .Values.openvpn.cipher }}
+          cipher {{ .Values.openvpn.cipher }}
+      {{ end }}
 
       key-direction 0
       keepalive 10 60
@@ -136,11 +147,15 @@ data:
       group nogroup
 
       push "route NETWORK NETMASK"
-{{ if (.Values.openvpn.OVPN_K8S_POD_NETWORK) (.Values.openvpn.OVPN_K8S_POD_SUBNET) }}
+{{ if .Values.openvpn.OVPN_K8S_POD_NETWORK }}
+  {{ if .Values.openvpn.OVPN_K8S_POD_SUBNET }}
       push "route {{ .Values.openvpn.OVPN_K8S_POD_NETWORK }} {{ .Values.openvpn.OVPN_K8S_POD_SUBNET }}"
+  {{ end }}
 {{ end }}
-{{ if (.Values.openvpn.OVPN_K8S_SVC_NETWORK) (.Values.openvpn.OVPN_K8S_SVC_SUBNET) }}
+{{ if .Values.openvpn.OVPN_K8S_SVC_NETWORK }}
+  {{ if .Values.openvpn.OVPN_K8S_SVC_SUBNET }}
       push "route {{ .Values.openvpn.OVPN_K8S_SVC_NETWORK }} {{ .Values.openvpn.OVPN_K8S_SVC_SUBNET }}"
+  {{ end }}
 {{ end }}
 
 {{ if .Values.openvpn.dhcpOptionDomain }}
