@@ -10,8 +10,8 @@ updateStrategy: {}
   #   maxUnavailable: 0
 
 image:
-  repository: jfelten/openvpn-docker
-  tag: 1.1.0
+  repository: registry.cn-hangzhou.aliyuncs.com/bobz/openvpn
+  tag: 0.0.1
   pullPolicy: IfNotPresent
 service:
   type: LoadBalancer
@@ -85,5 +85,11 @@ openvpn:
   # conf: |
   #  max-clients 100
   #  client-to-client
+  useCrl: false
+  # Use/generate certificate revocation list
+  taKey: false
+  # Use/generate a ta.key (<https://openvpn.net/community-resources/hardening-openvpn-security/>)
+  cipher: AES-256-GCM
+  # Override default cipher
 
 nodeSelector: {}

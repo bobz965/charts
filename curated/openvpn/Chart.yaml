@@ -3,11 +3,11 @@ description: A Helm chart to install an openvpn server inside a kubernetes clust
   generation is also part of the deployment, and this chart will generate client keys
   as needed.
 name: openvpn
-version: 3.12.4
-appVersion: 1.1.0
+version: 2.5.8
+appVersion: 2.5.8
 maintainers:
-- name: jfelten
-  email: john.felten@gmail.com
+- name: bobz965
+  email: jmdxjsjgcxy@gmail.com
 icon: https://forums.openvpn.net/styles/openvpn/theme/images/ovpnlogo.png
 keywords:
 - openvpn
@@ -19,6 +19,7 @@ keywords:
 - encryption
 home: https://openvpn.net/index.php/open-source.html
 sources:
+- https://github.com/bobz965/charts
 - https://github.com/jfelten/openvpn-docker
 - https://github.com/kubernetes/charts/tree/master/stable/openvpn
 - https://github.com/jfelten/helm-charts
