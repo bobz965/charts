@@ -62,7 +62,7 @@ openvpn:
   # Network subnet allocated for openvpn client (default: 255.255.0.0).
   OVPN_SUBNET: 255.255.255.0
   # Protocol used by openvpn tcp or udp (default: udp).
-  OVPN_PROTO: tcp
+  OVPN_PROTO: udp
   # Kubernetes pod network (optional).
   OVPN_K8S_POD_NETWORK: "10.16.0.0"
   # Kubernetes pod network subnet (optional).
