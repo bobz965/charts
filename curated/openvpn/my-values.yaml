@@ -60,18 +60,18 @@ openvpn:
   # Network allocated for openvpn clients (default: 10.240.0.0).
   OVPN_NETWORK: 10.240.0.0
   # Network subnet allocated for openvpn client (default: 255.255.0.0).
-  OVPN_SUBNET: 255.255.255.0
+  OVPN_SUBNET_MASK: 255.255.255.0
   # Protocol used by openvpn tcp or udp (default: udp).
   OVPN_PROTO: udp
   # Kubernetes pod network (optional).
   OVPN_K8S_POD_NETWORK: "10.16.0.0"
   # Kubernetes pod network subnet (optional).
-  OVPN_K8S_POD_SUBNET: "255.255.0.0"
+  OVPN_K8S_POD_SUBNET_MASK: "255.255.0.0"
   # Kubernetes service network (optional).
-  # Define openvpn.OVPN_K8S_SVC_NETWORK and openvpn.OVPN_K8S_SVC_SUBNET if it's needed to create a separate route to Kubernates service subnet
+  # Define openvpn.OVPN_K8S_SVC_NETWORK and openvpn.OVPN_K8S_SVC_SUBNET_MASK if it's needed to create a separate route to Kubernates service subnet
   OVPN_K8S_SVC_NETWORK: "10.96.0.0"
   # Kubernetes service network subnet (optional).
-  OVPN_K8S_SVC_SUBNET: "255.240.0.0"
+  OVPN_K8S_SVC_SUBNET_MASK: "255.240.0.0"
   # Server certificate data
   # keystoreSecret:
   # secret with openvpn certificates. If specified, certificates are taken from the secret

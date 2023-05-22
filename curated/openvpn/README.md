@@ -1,7 +1,9 @@
 # Helm chart for OpenVPN
+
 This chart will install an [OpenVPN](https://openvpn.net/) server inside a kubernetes cluster.  New certificates are generated on install, and a script is provided to generate client keys as needed.  The chart will automatically configure dns to use kube-dns and route all network traffic to kubernetes pods and services through the vpn.  By connecting to this vpn a host is effectively inside a cluster's network.
 
 ### Uses
+
 The primary purpose of this chart was to make it easy to access kubernetes services during development.  It could also be used for any service that only needs to be accessed through a vpn or as a standard vpn.
 
 ## Usage
@@ -22,7 +24,6 @@ POD_NAME=$(kubectl get pods -l "app=openvpn,release=$HELM_RELEASE" -o jsonpath='
 ```
 
 When all components of the openvpn chart have started use the following script to generate a client key:
-
 
 ```bash
 #!/bin/bash
@@ -48,6 +49,7 @@ The entire list of helper scripts can be found on [templates/config-openvpn.yaml
 Be sure to change `KEY_NAME` if generating additional keys.  Import the .ovpn file into your favorite openvpn tool like tunnelblick and verify connectivity.
 
 ## Configuration
+
 The following table lists the configurable parameters of the `openvpn` chart and their default values,
 and can be overwritten via the helm `--set` flag.
 
@@ -75,23 +77,23 @@ Parameter | Description | Default
 `persistence.size`             | Size of data volume                                                  | `2M`
 `podAnnotations`               | Key-value pairs to add as pod annotations                            | `{}`
 `openvpn.OVPN_NETWORK`         | Network allocated for openvpn clients                                | `10.240.0.0`
-`openvpn.OVPN_SUBNET`          | Network subnet allocated for openvpn                                 | `255.255.0.0`
+`openvpn.OVPN_SUBNET_MASK`          | Network subnet allocated for openvpn                                 | `255.255.0.0`
 `openvpn.OVPN_PROTO`           | Protocol used by openvpn tcp or udp                                  | `tcp`
 `openvpn.OVPN_K8S_POD_NETWORK` | Kubernetes pod network (optional)                                    | `10.0.0.0`
-`openvpn.OVPN_K8S_POD_SUBNET`  | Kubernetes pod network subnet (optional)                             | `255.0.0.0`
+`openvpn.OVPN_K8S_POD_SUBNET_MASK`  | Kubernetes pod network subnet (optional)                             | `255.0.0.0`
 `openvpn.OVPN_K8S_SVC_NETWORK` | Kubernetes service network (optional)                                | `nil`
-`openvpn.OVPN_K8S_SVC_SUBNET`  | Kubernetes service network subnet (optional)                         | `nil`
+`openvpn.OVPN_K8S_SVC_SUBNET_MASK`  | Kubernetes service network subnet (optional)                         | `nil`
 `openvpn.dhcpOptionDomain`     | Push a `dhcp-option DOMAIN` config                                   | `true`
 `openvpn.conf`                 | Arbitrary lines appended to the end of the server configuration file | `nil`
 `openvpn.redirectGateway`      | Redirect all client traffic through VPN                              | `true`
 `nodeSelector`                 | Node labels for pod assignment                                       | `{}`
 
 This chart has been engineered to use kube-dns and route all network traffic to kubernetes pods and services,
-to disable this behaviour set `openvpn.OVPN_K8S_POD_NETWORK` and `openvpn.OVPN_K8S_POD_SUBNET` to `null`.
+to disable this behaviour set `openvpn.OVPN_K8S_POD_NETWORK` and `openvpn.OVPN_K8S_POD_SUBNET_MASK` to `null`.
 
-If openvpn.OVPN_K8S_SVC_NETWORK and openvpn.OVPN_K8S_SVC_SUBNET are defined, an extra route for services subnet will be added.
+If openvpn.OVPN_K8S_SVC_NETWORK and openvpn.OVPN_K8S_SVC_SUBNET_MASK are defined, an extra route for services subnet will be added.
 
-#### Note: As configured the chart will create a route for a large 10.0.0.0/8 network that may cause issues if that is your local network.  If so tweak this value to something more restrictive.  This route is added, because GKE generates pods with IPs in this range.
+#### Note: As configured the chart will create a route for a large 10.0.0.0/8 network that may cause issues if that is your local network.  If so tweak this value to something more restrictive.  This route is added, because GKE generates pods with IPs in this range
 
 ### Certificates
 
